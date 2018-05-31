@@ -21,6 +21,7 @@
 ;; -------------------------------------------------------------------------------------------
 
 ;; URL: http://github.com/ananthakumaran/typescript.el
+;; Package-Version: 20180514.531
 ;; Version: 0.1
 ;; Keywords: typescript languages
 ;; Package-Requires: ()
@@ -300,6 +301,8 @@ Match group 1 is MUMBLE.")
                       "\\s-+\\(each\\)\\_>" nil nil
                       (list 1 'font-lock-keyword-face))
                 (cons "\\_<yield\\(\\*\\|\\_>\\)" 'font-lock-keyword-face)
+                ;; (cons "\\(?:\\s_\\|\\sw\\)*:" font-lock-comment-face)
+                ;; (cons typescript--objfield-re font-lock-comment-face)
                 (cons typescript--basic-type-re font-lock-type-face)
                 (cons typescript--constant-re font-lock-constant-face)))
   "Level two font lock keywords for `typescript-mode'.")
@@ -2652,6 +2655,34 @@ Key bindings:
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
 
+;; (defvar kews
+;;   (let ((tword "\\(?:\\s_\\|\\sw\\)*:")          ; Titles, like function defs
+;; 	(bword "\\(b\\|h[2-4]\\|strong\\)") ; Names of tags to boldify
+;;   )))
+
+
+;; (defconst thevars (cons typescript--objfield-re font-lock-comment-face))
+;; (setq-local font-lock-defaults (list thevars))
+;; (font-lock-add-keywords
+;;  'typescript-mode '((myreg 0 'special-comment t))
+;; )
+(setq myreg "\\(?:\\s_\\|\\sw\\)*:")
+(setq A "test")
+
+(defvar ts-mode-keywords
+  `((,typescript--objfield-re 0 font-lock-comment-face)))
+
+;; (defvar ts-mode-keywords
+;;   '(("\\(?:\\s_\\|\\sw\\)*:" 0 font-lock-comment-face)))
+
+ (font-lock-add-keywords 'typescript-mode ts-mode-keywords)
+
+
+;; (defface special-comment '((t (:foreground "#a02a2a" :underline t))) "Cyan")
+;; (font-lock-add-keywords
+;;  ;; 'typescript-mode '((myreg 0 'special-comment t)))
+;;  ;; 'typescript-mode '(("\\(?:\\s_\\|\\sw\\)*:" 0 'special-comment t))
+;;  'typescript-mode '((myreg 0 'special-comment t)))
 (provide 'typescript-mode)
 
 ;;; typescript-mode.el ends here
