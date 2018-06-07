@@ -304,7 +304,9 @@ Match group 1 is MUMBLE.")
                 ;; (cons "\\(?:\\s_\\|\\sw\\)*:" font-lock-comment-face)
                 ;; (cons typescript--objfield-re font-lock-comment-face)
                 (cons typescript--basic-type-re font-lock-type-face)
-                (cons typescript--constant-re font-lock-constant-face)))
+                (cons typescript--constant-re font-lock-constant-face)
+                ))
+;;(cons typescript--constant-re font-lock-constant-face)
   "Level two font lock keywords for `typescript-mode'.")
 
 ;; typescript--pitem is the basic building block of the lexical
@@ -540,6 +542,35 @@ Match group 1 is MUMBLE.")
   "Matches tslint flags.")
 
 ;;; Faces
+(defface typescript-method-face
+  '((t :foreground "#526FFF"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
+
+(defface typescript-special-face
+  '((t :foreground "#E45649"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
+
+(defface typescript-basic-type-face
+  '((t :foreground "#0184BC"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
+
+(defface typescript-myone
+  '((t :foreground "#C18401"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
+
+(defface typescript-keyword-face
+  '((t :foreground "#A626A4"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
+
+(defface typescript-keyword-class-face
+  '((t :foreground "#F2A60D"))
+  "Face used to highlight function parameters in javascript."
+  :group 'typescript)
 
 (defface typescript-jsdoc-tag
   '((t :foreground "SlateGray"))
@@ -1699,14 +1730,34 @@ and searches for the next token to be highlighted."
     (typescript--typedoc-literal-markup-matcher
      (0 'typescript-jsdoc-value t))
 
+    ;; BELOW WORKS TO REUSE REGEXES NOW DEFINE FACE
+    (,typescript--keyword-re (1 'typescript-keyword-face t))
+    (,typescript--constant-re (1 'typescript-myone t))
+    (,typescript--basic-type-re (1 'typescript-basic-type-face t))
+    ;(,typescript--plain-method-re (1 'typescript-method-face t))
+    ("\\(canAskForAutocompletion\\)" (1 'typescript-method-face t))
+    ;("\\(false\\)" (1 'typescript-jsdoc-tag t))
+
     (typescript--tslint-flag-matcher
      (1 font-lock-preprocessor-face t))
 
     ("\\.\\(prototype\\)\\_>"
      (1 font-lock-constant-face))
 
+    ;; (,(rx symbol-start "class" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
+    ;;  (1 font-lock-type-face))
+
+    (,(rx symbol-start "public" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
+     (1 'typescript-method-face))
+
+    (,(rx symbol-start "private" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
+     (1 'typescript-method-face))
+
+    (,(rx symbol-start "this" (+ ".") (group (+ (or (syntax word) (syntax symbol)))))
+     (1 'typescript-special-face))
+
     (,(rx symbol-start "class" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
-     (1 font-lock-type-face))
+     (1 'typescript-keyword-class-face))
 
     (,(rx symbol-start "extends" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
      (1 font-lock-type-face))
@@ -1715,7 +1766,7 @@ and searches for the next token to be highlighted."
      (1 font-lock-type-face))
 
     (,(rx symbol-start "interface" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
-     (1 font-lock-type-face))
+     (1 'typescript-keyword-class-face))
 
     (,(rx symbol-start "type" (+ space) (group (+ (or (syntax word) (syntax symbol)))))
      (1 font-lock-type-face))
@@ -2669,14 +2720,19 @@ Key bindings:
 (setq myreg "\\(?:\\s_\\|\\sw\\)*:")
 (setq A "test")
 
-(defvar ts-mode-keywords
-  `((,typescript--objfield-re 0 font-lock-comment-face)))
+
+ ;; typescript--constant-re
+;; (defvar ts-mode-keywords
+;;   `((,typescript--constant-re 0 'typescript-constant-face))
+;;   `((,typescript--objfield-re 0 font-lock-comment-face)))
 
 ;; (defvar ts-mode-keywords
+    ;; ("\\(false\\)" (,class (:foreground "orange")))
 ;;   '(("\\(?:\\s_\\|\\sw\\)*:" 0 font-lock-comment-face)))
 
- (font-lock-add-keywords 'typescript-mode ts-mode-keywords)
+; (font-lock-add-keywords 'typescript-mode ts-mode-keywords)
 
+;  (setq-local font-lock-defaults (list typescript--font-lock-keywords))
 
 ;; (defface special-comment '((t (:foreground "#a02a2a" :underline t))) "Cyan")
 ;; (font-lock-add-keywords
